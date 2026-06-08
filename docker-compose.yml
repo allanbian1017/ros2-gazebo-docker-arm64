@@ -8,43 +8,15 @@ services:
         - user_id=1000
         - ros_ws=/home/dockeruser/dev_ws
 
-    # Enabling GPU access with Compose
-    # https://docs.docker.com/compose/gpu-support/
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #          - capabilities: [gpu]
-    #            count: all
-
-    environment:
-      # Set a fancy prompt (See ~/.bashrc in the container)
-      - TERM=xterm-256color
-
-      # Mac X11
-      # - DISPLAY=$DISPLAY
-      # - DISPLAY=docker.for.mac.host.internal:0
-      - DISPLAY=192.168.35.143:0
-      # - DISPLAY=host.docker.internal:0
-
-      # # WSLg settings
-      # # https://www.reddit.com/r/bashonubuntuonwindows/comments/n2nthu/can_i_use_the_new_wslg_with_docker/
-      # - DISPLAY
-      # - WAYLAND_DISPLAY
-      # - XDG_RUNTIME_DIR
-      # - PULSE_SERVER
-
     volumes:
       - ./:/home/dockeruser/project
       - ./dev_ws:/home/dockeruser/dev_ws
       - ./docker/ros2/.ros:/home/dockeruser/.ros
       - ./docker/ros2/.gazebo/:/home/dockeruser/.gazebo
 
-      # Mac X11
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - ~/.Xauthority:/root/.Xauthority:rw
+    ports:
+      - "9090:9090"
 
-      # # WSLg settings
-      # - /mnt/wslg:/mnt/wslgs
-      # - /tmp/.X11-unix:/tmp/.X11-unix
-    privileged: true
+    command: >
+      bash -c "
+      ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
